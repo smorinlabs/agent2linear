@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - run: npx tsup # build dist/index.js (the suites invoke it)
       - name: Build locked TypeScript live suites
         run: ./node_modules/.bin/tsup --config tsup.live.config.ts

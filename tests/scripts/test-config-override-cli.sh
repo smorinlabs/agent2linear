@@ -79,11 +79,13 @@ PASS=0; FAIL=0; TOTAL=0
 run_test() { TOTAL=$((TOTAL + 1)); echo "Test $1: $2"; }
 pass_test() { PASS=$((PASS + 1)); echo "  ✓ PASS"; }
 fail_test() { FAIL=$((FAIL + 1)); echo "  ✗ FAIL: $1"; }
+# Here-string, not `printf | grep -q`: under pipefail, grep -q exiting early can
+# SIGPIPE the printf and turn a match into a spurious failure on a loaded machine.
 assert_contains() { # haystack needle msg
-  if printf '%s' "$1" | grep -qF "$2"; then pass_test; else fail_test "$3 — expected to contain '$2', got: $1"; fi
+  if grep -qF "$2" <<<"$1"; then pass_test; else fail_test "$3 — expected to contain '$2', got: $1"; fi
 }
 assert_not_contains() { # haystack needle msg
-  if printf '%s' "$1" | grep -qF "$2"; then fail_test "$3 — did NOT expect '$2', got: $1"; else pass_test; fi
+  if grep -qF "$2" <<<"$1"; then fail_test "$3 — did NOT expect '$2', got: $1"; else pass_test; fi
 }
 
 echo "=========================================="
