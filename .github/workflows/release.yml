@@ -22,7 +22,7 @@ jobs:
         with:
           node-version: 24.x
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - name: Verify tag matches package version
         run: |
           RELEASE_PACKAGE_VERSION="$(node -p "require('./package.json').version")"
@@ -50,19 +50,7 @@ jobs:
       - name: Build locked TypeScript live suites
         run: ./node_modules/.bin/tsup --config tsup.live.config.ts
       - run: npm audit --omit=dev --audit-level=high
-      - run: bash tests/scripts/test-config-override-cli.sh
-      - run: bash tests/scripts/test-cursor-history-cli.sh
-      - run: bash tests/scripts/test-comments-cli.sh
-      - run: bash tests/scripts/test-label-lifecycle-cli.sh
-      - run: node tests/scripts/test-m36-api-key-cli.js
-      - run: node tests/scripts/test-m36-config-cli.js
-      - run: node tests/scripts/test-m36-diagnostics-cli.js
-      - run: node tests/scripts/test-m36-output-cli.js
-      - run: node tests/scripts/test-m36-output-migrations-cli.js
-      - run: node tests/scripts/test-m36-parser-no-input-cli.js
-      - run: node tests/scripts/test-m36-signals-cli.js
-      - run: node tests/scripts/test-m36-tsv-cli.js
-      - run: node tests/scripts/test-m36-version-cli.js
+      - run: node tests/scripts/run-e2e-cli.mjs
       - name: Auth smoke (whoami)
         run: node dist/index.js whoami
         env:
@@ -100,7 +88,7 @@ jobs:
           node-version: 24.x
           registry-url: https://registry.npmjs.org
           package-manager-cache: false
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - name: Verify npm supports trusted publishing
         run: |
           node -e 'const [major, minor, patch] = process.argv[1].split(".").map(Number); if (major < 11 || (major === 11 && (minor < 5 || (minor === 5 && patch < 1)))) process.exit(1)' "$(npm --version)"
