@@ -6,6 +6,13 @@ on:
   pull_request:
     branches: [main]
 
+# Cancel superseded runs on the same PR. Pushes to main are grouped per-SHA so
+# they are never cancelled: release.yml requires check (22.x)/(24.x) success on
+# the exact tagged SHA.
+concurrency:
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   check:
     runs-on: blacksmith-4vcpu-ubuntu-2404
@@ -18,24 +25,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: npm
-      - run: npm ci
+      - run: npm ci --no-audit --no-fund
       - run: npx tsc --noEmit
       - run: npx eslint src --ext .ts,.tsx
       - run: npx vitest run
       - run: npx tsup
       # Offline/hermetic E2E against the built CLI (dist/index.js). Needs NO secret —
-      # the suite unsets LINEAR_API_KEY and sandboxes HOME/XDG; runs on both Node versions.
-      - run: bash tests/scripts/test-config-override-cli.sh
-      - run: bash tests/scripts/test-cursor-history-cli.sh
-      - run: bash tests/scripts/test-comments-cli.sh
-      - run: bash tests/scripts/test-label-lifecycle-cli.sh
-      # Publishable-tier CLI Standard conformance fixtures (M36 / R9.14).
-      - run: node tests/scripts/test-m36-api-key-cli.js
-      - run: node tests/scripts/test-m36-config-cli.js
-      - run: node tests/scripts/test-m36-diagnostics-cli.js
-      - run: node tests/scripts/test-m36-output-cli.js
-      - run: node tests/scripts/test-m36-output-migrations-cli.js
-      - run: node tests/scripts/test-m36-parser-no-input-cli.js
-      - run: node tests/scripts/test-m36-signals-cli.js
-      - run: node tests/scripts/test-m36-tsv-cli.js
-      - run: node tests/scripts/test-m36-version-cli.js
+      # each script unsets LINEAR_API_KEY and sandboxes HOME/XDG in its own temp root,
+      # so the runner executes them concurrently. Runs on both Node versions.
+      # Includes the publishable-tier CLI Standard conformance fixtures (M36 / R9.14).
+      - run: node tests/scripts/run-e2e-cli.mjs
