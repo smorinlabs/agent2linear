@@ -1,6 +1,5 @@
 import { Command } from 'commander';
 
-import { listProjectStatuses } from './list.js';
 import { syncProjectStatusAliases } from './sync-aliases.js';
 import { viewProjectStatus } from './view.js';
 
@@ -28,6 +27,7 @@ Examples:
   $ agent2linear pstatus list -f tsv | cut -f1    # Get just status IDs
 `)
     .action(async (options) => {
+      const { listProjectStatuses } = await import('./list.js');
       await listProjectStatuses(options);
     });
 

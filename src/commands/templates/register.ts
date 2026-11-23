@@ -1,6 +1,5 @@
 import { Command } from 'commander';
 
-import { listTemplates } from './list.js';
 import { viewTemplate } from './view.js';
 
 export function registerTemplatesCommands(cli: Command): void {
@@ -29,6 +28,7 @@ Examples:
   $ agent2linear tmpl list -f tsv | grep issue  # Filter issue templates
 `)
     .action(async (type?: string, options?: { interactive?: boolean; web?: boolean; format?: 'tsv' | 'json' }) => {
+      const { listTemplates } = await import('./list.js');
       await listTemplates(type, options || {});
     });
 

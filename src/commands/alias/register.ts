@@ -1,8 +1,6 @@
 import { Argument,Command } from 'commander';
 
-import { addAliasCommand } from './add.js';
 import { clearAliasCommand } from './clear.js';
-import { editAlias } from './edit.js';
 import { getAliasCommand } from './get.js';
 import { listAliasCommand } from './list.js';
 import { removeAliasCommand } from './remove.js';
@@ -61,6 +59,7 @@ Examples:
 Note: --email, --name, and --interactive flags are only valid for member/user type
 `)
     .action(async (type: string, alias: string, id: string | undefined, options) => {
+      const { addAliasCommand } = await import('./add.js');
       await addAliasCommand(type, alias, id, options);
     });
 
@@ -172,6 +171,7 @@ Note: This command is fully interactive. For non-interactive editing,
       use 'alias add' and 'alias remove' commands instead.
 `)
     .action(async (options) => {
+      const { editAlias } = await import('./edit.js');
       await editAlias(options);
     });
 

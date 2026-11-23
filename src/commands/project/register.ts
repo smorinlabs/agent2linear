@@ -3,7 +3,6 @@ import { Command, Option } from 'commander';
 import { resolveOutputMode } from '../../lib/output-mode.js';
 import { addMilestones } from './add-milestones.js';
 import { registerProjectCommentCommands } from './comment/register.js';
-import { createProjectCommand } from './create.js';
 import { listProjectsCommand } from './list.js';
 import { updateProjectCommand } from './update.js';
 import { viewProject } from './view.js';
@@ -207,6 +206,7 @@ Note: Set defaults with config:
 `
     )
     .action(async (options, command: Command) => {
+      const { createProjectCommand } = await import('./create.js');
       await createProjectCommand(withJsonResultMode(options, command));
     });
 

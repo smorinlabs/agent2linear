@@ -1,10 +1,7 @@
 import { Command } from 'commander';
 
-import { listInitiatives } from './list.js';
-import { selectInitiative } from './select.js';
 import { setInitiative } from './set.js';
 import { syncInitiativeAliases } from './sync-aliases.js';
-import { viewInitiative } from './view.js';
 
 export function registerInitiativesCommands(cli: Command): void {
   const initiatives = cli
@@ -30,6 +27,7 @@ Examples:
   $ agent2linear init list -f json | jq '.[0]'  # Pipe to jq
 `)
     .action(async (options) => {
+      const { listInitiatives } = await import('./list.js');
       await listInitiatives(options);
     });
 
@@ -49,6 +47,7 @@ Examples:
   $ agent2linear init view -I --web             # Select and open in browser
 `)
     .action(async (id: string | undefined, options) => {
+      const { viewInitiative } = await import('./view.js');
       await viewInitiative(id, options);
     });
 
@@ -63,6 +62,7 @@ Examples:
   $ agent2linear initiatives select --project      # Save to project config
 `)
     .action(async (options) => {
+      const { selectInitiative } = await import('./select.js');
       await selectInitiative(options);
     });
 

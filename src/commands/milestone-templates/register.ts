@@ -3,8 +3,6 @@ import { Command } from 'commander';
 import { UsageError } from '../../lib/cli-error.js';
 import { requireInteractiveInput } from '../../lib/interaction-policy.js';
 import { createTemplate } from './create.js';
-import { createTemplateInteractive } from './create-interactive.js';
-import { editTemplateInteractive } from './edit-interactive.js';
 import { listMilestoneTemplates } from './list.js';
 import { removeTemplate } from './remove.js';
 import { viewMilestoneTemplate } from './view.js';
@@ -77,6 +75,7 @@ Note: Milestone spec format is "name:targetDate:description"
       if (options.interactive) {
         requireInteractiveInput('milestone-templates create');
         // In interactive mode, name is collected interactively
+        const { createTemplateInteractive } = await import('./create-interactive.js');
         await createTemplateInteractive(options);
       } else {
         if (!name) {
@@ -101,6 +100,7 @@ Examples:
 Note: If no scope is specified, the template will be edited in its current scope.
 `)
     .action(async (name: string, options) => {
+      const { editTemplateInteractive } = await import('./edit-interactive.js');
       await editTemplateInteractive(name, options);
     });
 

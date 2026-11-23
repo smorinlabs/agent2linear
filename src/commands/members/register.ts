@@ -1,6 +1,5 @@
 import { Command } from 'commander';
 
-import { listMembers } from './list.js';
 import { syncMemberAliases } from './sync-aliases.js';
 
 export function registerMembersCommands(cli: Command): void {
@@ -44,6 +43,7 @@ Note: By default, uses your configured default team. Use --org-wide to see all m
   $ agent2linear config set defaultTeam team_xxx  # Set default team
 `)
     .action(async (options) => {
+      const { listMembers } = await import('./list.js');
       await listMembers(options);
     });
 

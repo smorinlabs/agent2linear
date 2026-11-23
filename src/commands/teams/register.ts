@@ -1,7 +1,5 @@
 import { Command } from 'commander';
 
-import { listTeams } from './list.js';
-import { selectTeam } from './select.js';
 import { setTeam } from './set.js';
 import { syncTeamAliases } from './sync-aliases.js';
 import { viewTeam } from './view.js';
@@ -30,6 +28,7 @@ Examples:
   $ agent2linear team list -f tsv | cut -f1  # Get just team IDs
 `)
     .action(async (options) => {
+      const { listTeams } = await import('./list.js');
       await listTeams(options);
     });
 
@@ -44,6 +43,7 @@ Examples:
   $ agent2linear teams select --project      # Save to project config
 `)
     .action(async (options) => {
+      const { selectTeam } = await import('./select.js');
       await selectTeam(options);
     });
 
