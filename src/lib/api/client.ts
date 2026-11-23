@@ -1,6 +1,17 @@
-import { LinearClient as SDKClient } from '@linear/sdk';
+import { createRequire } from 'node:module';
+
+import type { LinearClient as SDKClient } from '@linear/sdk';
 
 import { getApiKey } from '../config.js';
+
+// Loaded on first use so commands that never reach the API (help, --version,
+// config, usage/auth failures) skip the SDK's ~50 ms import cost. The package
+// only exports a CommonJS build, so a synchronous require yields the same module
+// a static import would, and getLinearClient() stays synchronous.
+const requireSdk = createRequire(import.meta.url);
+function loadLinearSdk(): typeof import('@linear/sdk') {
+  return requireSdk('@linear/sdk') as typeof import('@linear/sdk');
+}
 
 export class LinearClientError extends Error {
   constructor(message: string) {
@@ -35,7 +46,8 @@ export function getLinearClient(): SDKClient {
     );
   }
 
-  cachedClient = new SDKClient({ apiKey });
+  const { LinearClient } = loadLinearSdk();
+  cachedClient = new LinearClient({ apiKey });
   return cachedClient;
 }
 
@@ -125,7 +137,8 @@ export async function getCurrentUser(): Promise<{
  */
 export async function validateApiKey(apiKey: string): Promise<boolean> {
   try {
-    const client = new SDKClient({ apiKey });
+    const { LinearClient } = loadLinearSdk();
+    const client = new LinearClient({ apiKey });
     await client.viewer;
     return true;
   } catch {

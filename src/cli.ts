@@ -22,7 +22,6 @@ import { registerProjectCommands } from './commands/project/register.js';
 import { registerProjectLabelsCommands } from './commands/project-labels/register.js';
 import { registerProjectStatusCommands } from './commands/project-status/register.js';
 import { registerPromptCommands } from './commands/prompt/register.js';
-import { setup } from './commands/setup.js';
 import { registerTeamsCommands } from './commands/teams/register.js';
 import { registerTemplatesCommands } from './commands/templates/register.js';
 import { whoamiCommand } from './commands/whoami.js';
@@ -325,6 +324,7 @@ This command will guide you through:
 `
   )
   .action(async () => {
+    const { setup } = await import('./commands/setup.js');
     await setup();
   });
 

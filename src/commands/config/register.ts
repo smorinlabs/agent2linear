@@ -1,7 +1,6 @@
 import { Argument,Command } from 'commander';
 
 import { CONFIG_KEY_CHOICES, type ConfigKey } from '../../lib/config.js';
-import { editConfig } from './edit.js';
 import { explainConfig } from './explain.js';
 import { getConfigValue } from './get.js';
 import { listConfig } from './list.js';
@@ -151,6 +150,7 @@ Examples:
   $ agent2linear cfg edit                         # Same as 'config edit' (alias)
 `)
     .action(async (options) => {
+      const { editConfig } = await import('./edit.js');
       await editConfig(options);
     });
 
